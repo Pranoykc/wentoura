@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wentoura Holidays - Destinations</title>
+  <link rel="icon" href="./img/logo.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #ffffff;
+      color: #080808;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ===== Loading Screen ===== */
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #f5f3f0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    #loading.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader-logo {
+      max-width: 400px;
+      width: 400px;
+      height: auto;
+      margin-bottom: 20px;
+      animation: pulse 2s infinite ease-in-out;
+      filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.6));
+    }
+
+    @media (max-width: 768px) {
+      .loader-logo {
+        max-width: 250px;
+        width: 250px;
+      }
+    }
+
+    .loader-text {
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: #000;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .navbar {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 5%;
+      z-index: 1000;
+    }
+
+    .menu-toggle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    .menu-toggle i {
+      color: #000;
+      font-size: 24px;
+    }
+
+    .logo {
+      font-size: 1.2rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: #000000;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .get-in-touch {
+      background: #fff;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .get-in-touch:hover {
+      background: #f0f0f0;
+    }
+
+    .page-header {
+      padding: 100px 5% 50px;
+      text-align: center;
+    }
+
+    .page-title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #030303;
+    }
+
+    .categories {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 30px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .category-link {
+      color: #0e0d0d;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .category-link:hover,
+    .category-link.active {
+      color: #796f6f;
+      text-decoration: underline;
+    }
+
+    .destinations-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 5%;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      padding-bottom: 100px;
+    }
+
+    .destination-card {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 300px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      background: #111;
+    }
+
+    .destination-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .destination-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: all 0.5s ease;
+    }
+
+    .destination-card:hover .destination-image {
+      transform: scale(1.05);
+    }
+
+    .destination-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+      transition: all 0.3s ease;
+    }
+
+    .destination-category {
+      font-size: 1.6rem;
+      color: #fff;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .destination-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+
+    .destination-description {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: #ffffff;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    .destination-price {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #cf2c2c;
+      margin-bottom: 15px;
+    }
+
+    .destination-cta {
+      display: inline-block;
+      color: #f0ebeb;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 30px;
+      background: #cf2c2c;
+      transition: all 0.3s ease;
+    }
+
+    .destination-cta:hover {
+      background: #e03a3c;
+      transform: translateX(5px);
+    }
+
+    .footer-section {
+      width: 100%;
+      height: 500px;
+      position: relative;
+      overflow: hidden;
+      background: url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1920&q=80') no-repeat center center;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 5%;
+    }
+
+    .footer-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 5;
+    }
+
+    .footer-content {
+      max-width: 800px;
+      text-align: center;
+      color: #fff;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .footer-content .footer-text {
+      text-align: center;
+      max-width: 600px;
+    }
+
+    .footer-content .footer-text h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      display: block;
+    }
+
+    .footer-content .footer-text p {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 15px;
+      display: block;
+    }
+
+    .footer-copyright {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+      text-align: center;
+    }
+
+    .logo-icon {
+      width: 200px;
+      height: auto;
+      transition: transform 0.4s ease;
+    }
+
+    .logo-icon:hover {
+      transform: scale(1.05);
+    }
+
+    /* ===== Modal Styles ===== */
+    .wentoura-modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      z-index: 2000;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1999;
+    }
+
+    .modal-content {
+      position: relative;
+    }
+
+    .modal-content h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-align: center;
+      color: var(--charcoal);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--charcoal);
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    .form-group textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .submit-btn,
+    .close-btn {
+      padding: 10px 20px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .submit-btn {
+      background: var(--gold);
+      color: white;
+    }
+
+    .close-btn {
+      background: #eee;
+      color: var(--charcoal);
+    }
+
+    .submit-btn:hover {
+      background: #c19b2f;
+    }
+
+    .close-btn:hover {
+      background: #ddd;
+    }
+
+    .social-icons {
+      position: fixed;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 1000;
+    }
+
+    .social-icons a {
+      color: #000;
+      font-size: 24px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .social-icons a:hover {
+      transform: scale(1.2);
+    }
+
+
+    @media (max-width: 992px) {
+      .navbar {
+        padding: 1rem 5%;
+      }
+
+      .menu-toggle {
+        width: 50px;
+        height: 50px;
+      }
+
+      .logo {
+        font-size: 1rem;
+      }
+
+      .get-in-touch {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+      }
+
+      .page-title {
+        font-size: 2.5rem;
+      }
+
+      .categories {
+        gap: 20px;
+        font-size: 0.8rem;
+      }
+
+      .destinations-container {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+      }
+
+      .destination-card {
+        height: 250px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem 3%;
+      }
+
+      .page-header {
+        padding: 80px 5% 40px;
+      }
+
+      .page-title {
+        font-size: 2rem;
+      }
+
+      .categories {
+        gap: 15px;
+        font-size: 0.7rem;
+      }
+
+      .destinations-container {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 15px;
+        padding-bottom: 80px;
+      }
+
+      .destination-card {
+        height: 250px;
+      }
+      
+      .destination-image {
+        object-fit: cover;
+        object-position: center;
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-title {
+        font-size: 1.5rem;
+      }
+
+      .categories {
+        gap: 10px;
+        font-size: 0.7rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .destinations-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding-bottom: 80px;
+        padding-left: 3%;
+        padding-right: 3%;
+      }
+
+      .destination-card {
+        height: 350px;
+        border-radius: 15px;
+      }
+
+      .destination-image {
+        object-fit: cover;
+        object-position: center;
+        width: 100%;
+        height: 100%;
+        border-radius: 15px;
+      }
+
+      .social-icons {
+        right: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Loading Screen -->
+  <div id="loading">
+    <img src="./img/logo.png" alt="Wentoura Logo" class="loader-logo">
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <img src="./img/logo.png" alt="Wentoura Logo" class="logo-icon">
+    <button class="get-in-touch" onclick="openEnquiryModal()">Get in touch</button>
+  </nav>
+
+
+  <section class="page-header">
+    <h1 class="page-title">Destinations</h1>
+
+  </section>
+
+  <!-- <div class="social-icons">
+    <a href="https://www.instagram.com/wentouraholidays/" target="_blank"><i class="fab fa-instagram"></i></a>
+    <a href="https://api.whatsapp.com/send?phone=919876543210&text=Hello!%20I%20have%20a%20question%20about%20your%20travel%20packages." target="_blank"><i class="fab fa-whatsapp"></i></a>
+    <a href="https://www.facebook.com/share/1MXUzidNvG/?mibextid=wwXIfr" target="_blank"><i class="fab fa-facebook-f"></i></a>
+
+  </div> -->
+
+  <div class="destinations-container">
+    <!-- Destination Card 1 -->
+    <div class="destination-card" data-category="india">
+      <img src="https://res.cloudinary.com/dqm2v4a74/image/upload/v1762254136/download_12_v9oyn0.jpg" alt="Andaman Islands"
+        class="destination-image">
+      <div class="destination-content">
+        <h3 class="destination-title">Andaman Islands</h3>
+        <p class="destination-description">
+          Explore pristine beaches, historic Cellular Jail, and crystal-clear waters. Experience Havelock Island, Radhanagar Beach, and the Light & Sound show in this 4-day tropical paradise.
+        </p>
+      </div>
+    </div>
+
+    <!-- Destination Card 2 -->
+    <div class="destination-card" data-category="india">
+      <img src="https://res.cloudinary.com/dqm2v4a74/image/upload/v1762254781/Nature_s_masterpiece_at_sunrise____Sunrise__NatureLovers__GreenMeadows__PalmTrees__MorningMagic__NaturePhotography__PeacefulMorning__SunriseScenery__NaturalBeauty__LandscapeLovers__TranquilView__SereneSunrise__upo9nl.jpg" alt="Kerala"
+        class="destination-image">
+      <div class="destination-content">
+        <h3 class="destination-title">Kerala - God's Own Country</h3>
+        <p class="destination-description">
+          Journey through Kochi's heritage, Munnar's tea gardens, Thekkady's wildlife, and Alappuzha's backwaters. Experience Kolukkumalai sunrise, houseboat cruise, and spice plantations in this 6-day adventure.
+        </p>
+      </div>
+    </div>
+
+    <!-- Destination Card 3 -->
+    <div class="destination-card" data-category="india">
+      <img src="https://res.cloudinary.com/dqm2v4a74/image/upload/v1761326376/L1_v3xdor.jpg" alt="Lakshadweep Island"
+        class="destination-image">
+      <div class="destination-content">
+        <h3 class="destination-title">Lakshadweep Island Escape</h3>
+        <p class="destination-description">
+          Discover the pristine beauty of Lakshadweep — a paradise of turquoise waters, white sandy beaches,
+          and vibrant coral reefs. Enjoy snorkeling, scuba diving, and serene island life in this tropical
+          getaway.
+        </p>
+      </div>
+    </div>
+
+    <!-- Destination Card 4 -->
+    <div class="destination-card" data-category="asia">
+      <img src="https://res.cloudinary.com/dqm2v4a74/image/upload/v1761327127/Malaysia_2_voum5d.jpg" alt="Malaysia"
+        class="destination-image">
+      <div class="destination-content">
+        <h3 class="destination-title">Magical Malaysia Discovery</h3>
+        <p class="destination-description">
+          Explore the vibrant cities, lush rainforests, and tropical islands of Malaysia. From the iconic
+          Petronas Towers in Kuala Lumpur to the beaches of Langkawi and the culture of Penang, it’s a journey
+          of colors and contrasts.
+        </p>
+      </div>
+    </div>
+
+    <!-- Destination Card 3 -->
+    <div class="destination-card" data-category="asia">
+      <img src="https://res.cloudinary.com/dqm2v4a74/image/upload/v1761330553/Thailand_2_c2ujbi.jpg" alt="Thailand"
+        class="destination-image">
+      <div class="destination-content">
+        <h3 class="destination-title">Thailand Tropical Escape</h3>
+        <p class="destination-description">
+          Experience the vibrant culture and stunning landscapes of Thailand. From the bustling streets of
+          Bangkok to the serene beaches of Phuket and the lush jungles of Chiang Mai, enjoy a perfect blend of
+          adventure and relaxation.
+        </p>
+      </div>
+    </div>
+
+    <!-- Destination Card 4 -->
+    <div class="destination-card" data-category="india">
+      <img src="https://res.cloudinary.com/dqm2v4a74/image/upload/v1761327580/Kashmir_2_prj9hb.jpg" alt="Kashmir"
+        class="destination-image">
+      <div class="destination-content">
+        <h3 class="destination-title">Heavenly Kashmir Retreat</h3>
+        <p class="destination-description">
+          Experience the breathtaking beauty of Kashmir — snow-capped mountains, serene Dal Lake, and lush
+          valleys. Enjoy shikara rides, houseboat stays, and explore the enchanting meadows of Gulmarg and
+          Pahalgam.
+        </p>
+      </div>
+    </div>
+
+    <!-- Destination Card 5 -->
+    <div class="destination-card" data-category="central asia">
+      <img src="https://res.cloudinary.com/dqm2v4a74/image/upload/v1761329531/Kazakhstan_1_foamnn.jpg" alt="Kazakhstan"
+        class="destination-image">
+      <div class="destination-content">
+        <h3 class="destination-title">Kazakhstan Explorer</h3>
+        <p class="destination-description">
+          Journey through Kazakhstan’s vast landscapes, from the modern cityscape of Almaty to the dramatic
+          steppes and the Altai Mountains. Discover nomadic culture, pristine lakes, and unique natural
+          wonders on this unforgettable adventure.
+        </p>
+      </div>
+    </div>
+
+    <!-- Destination Card 6 -->
+    <div class="destination-card" data-category="india">
+      <img src="https://res.cloudinary.com/dqm2v4a74/image/upload/v1761330131/Meghalaya_2_llnfh2.jpg" alt="Meghalaya"
+        class="destination-image">
+      <div class="destination-content">
+        <h3 class="destination-title">Mystical Meghalaya Adventure</h3>
+        <p class="destination-description">
+          Explore the breathtaking landscapes of Meghalaya, the “Abode of Clouds.” Wander through lush hills,
+          cascading waterfalls, living root bridges, and charming villages while experiencing the rich culture
+          of the Khasi, Garo, and Jaintia tribes.
+        </p>
+      </div>
+    </div>
+
+    <!-- Destination Card 7 -->
+    <div class="destination-card" data-category="asia">
+      <img src="https://res.cloudinary.com/dqm2v4a74/image/upload/v1761330327/Bhutan_2_cdcxi8.jpg" alt="Bhutan"
+        class="destination-image">
+      <div class="destination-content">
+        <h3 class="destination-title">Bhutan Cultural Retreat</h3>
+        <p class="destination-description">
+          Discover the serene beauty of Bhutan, the Land of the Thunder Dragon. Explore majestic monasteries,
+          lush valleys, and the vibrant culture of the Himalayan kingdom while immersing yourself in peaceful
+          mountain landscapes.
+        </p>
+      </div>
+    </div>
+
+    <!-- Destination Card 8 -->
+    <div class="destination-card" data-category="indonesia">
+      <img src="https://res.cloudinary.com/dqm2v4a74/image/upload/v1761330938/Bali_1_hzikgx.jpg" alt="Bali"
+        class="destination-image">
+      <div class="destination-content">
+        <h3 class="destination-title">Bali Island Paradise</h3>
+        <p class="destination-description">
+          Escape to Bali’s tropical paradise with its pristine beaches, lush rice terraces, and vibrant
+          culture. Experience temple visits, surfing, and the island’s serene landscapes for an unforgettable
+          getaway.
+        </p>
+      </div>
+    </div>
+
+    <!-- Destination Card 9 -->
+    <div class="destination-card" data-category="asia">
+      <img src="https://res.cloudinary.com/dqm2v4a74/image/upload/v1761377954/Vietnam_2_o6yvew.jpg" alt="Vietnam"
+        class="destination-image">
+      <div class="destination-content">
+        <h3 class="destination-title">Vietnam Scenic Journey</h3>
+        <p class="destination-description">
+          Discover the charm of Vietnam with its emerald rice fields, limestone cliffs, and ancient cities.
+          Cruise through Ha Long Bay, wander the lantern-lit streets of Hoi An, and savor authentic Vietnamese
+          cuisine on this unforgettable adventure.
+        </p>
+      </div>
+    </div>
+
+    <!-- Destination Card 10 -->
+    <div class="destination-card" data-category="india">
+      <img src="https://res.cloudinary.com/dqm2v4a74/image/upload/v1761378275/Manali_2_eoitam.jpg" alt="Manali"
+        class="destination-image">
+      <div class="destination-content">
+        <h3 class="destination-title">Manali Mountain Escape</h3>
+        <p class="destination-description">
+          Embrace the charm of Manali, nestled in the heart of the Himalayas. Enjoy snow-covered peaks, scenic
+          valleys, and thrilling adventures like paragliding, river rafting, and trekking for a perfect
+          mountain getaway.
+        </p>
+      </div>
+    </div>
+
+    <!-- Destination Card 11 -->
+    <div class="destination-card" data-category="asia">
+      <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80" alt="Phuket & Krabi"
+        class="destination-image">
+      <div class="destination-content">
+        <h3 class="destination-title">Phuket & Krabi Islands</h3>
+        <p class="destination-description">
+          Explore Thailand's most beautiful beach destinations with crystal-clear waters, limestone cliffs, and tropical paradise. Experience Phi Phi Islands, James Bond Island, and pristine beaches in this 5-day adventure.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <section class="footer-section">
+    <div class="footer-content">
+      <div class="footer-text">
+        <h3>About</h3>
+        <p>Wentoura Holidays is your trusted travel partner, creating personalized journeys with care, comfort,
+          and unforgettable experiences.</p>
+
+        <h3>Have a Questions?</h3>
+        <p>Wentoura, Parakkottu Towers, Club Road, 7th Cross Road, Girinagar, Kadavanthra, Ernakulam-682020</p>
+        <p>+91 6238468737 , +91 9995668737</p>
+        <p>Wentoura.com</p>
+      </div>
+      <div class="footer-copyright">
+        <p>Copyright ©2025 All rights reserved | Wentoura.co</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Enquiry Modal -->
+  <div id="enquiryModal" class="wentoura-modal">
+    <div class="modal-content">
+      <h2>Plan Your Trip</h2>
+      <form id="enquiryForm">
+        <div class="form-group">
+          <label>Destination</label>
+          <input type="text" id="destination" placeholder="Enter destination" required />
+        </div>
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="name" placeholder="Your name" required />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="Your email" required />
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" id="phone" placeholder="Your phone number" required />
+        </div>
+        <div class="form-group">
+          <label>Enquiry</label>
+          <textarea id="message" placeholder="Tell us about your trip"></textarea>
+        </div>
+        <div class="modal-buttons">
+          <button type="submit" class="submit-btn">Send Enquiry</button>
+          <button type="button" class="close-btn" onclick="closeEnquiryModal()">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="modalOverlay" class="modal-overlay" onclick="closeEnquiryModal()"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const categoryLinks = document.querySelectorAll('.category-link');
+      const destinationCards = document.querySelectorAll('.destination-card');
+
+      // Category filtering
+      categoryLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+
+          // Update active state
+          categoryLinks.forEach(lnk => lnk.classList.remove('active'));
+          this.classList.add('active');
+
+          // Get selected category (convert to lowercase)
+          const selectedCategory = this.textContent.trim().toLowerCase();
+
+          // Normalize category for comparison (replace space with hyphen only if needed)
+          // But in this case, we'll keep data-category with spaces to match "Central Asia"
+          destinationCards.forEach(card => {
+            const cardCategory = card.dataset.category.toLowerCase();
+            if (selectedCategory === 'all' || selectedCategory === cardCategory) {
+              card.style.display = 'block';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+
+
+
+      // Make destinations clickable and add hover effects
+      destinationCards.forEach(card => {
+        // Add click event to redirect to detail page
+        card.addEventListener('click', () => {
+          const title = card.querySelector('.destination-title').textContent;
+          const slug = getTitleToSlugMapping(title);
+          window.location.href = `destination-detail-new.html?destination=${slug}`;
+        });
+
+        // Hover to show description
+        card.addEventListener('mouseenter', () => {
+          const description = card.querySelector('.destination-description');
+          if (description) {
+            description.style.display = 'block';
+          }
+        });
+
+        card.addEventListener('mouseleave', () => {
+          const description = card.querySelector('.destination-description');
+          if (description) {
+            description.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Function to map destination titles to data keys
+    function getTitleToSlugMapping(title) {
+      const titleMap = {
+        'Lakshadweep Island Escape': 'lakshadweep-islands',
+        'Magical Malaysia Discovery': 'malaysia-truly-asia',
+        'Thailand Tropical Escape': 'thailand-land-of-smiles',
+        'Heavenly Kashmir Retreat': 'kashmir-heaven-on-earth',
+        'Kazakhstan Explorer': 'kazakhstan-land-of-wonders',
+        'Mystical Meghalaya Adventure': 'meghalaya-land-of-clouds',
+        'Bhutan Cultural Retreat': 'bhutan-land-of-thunder-dragon',
+        'Bali Island Paradise': 'bali-island-of-gods',
+        'Vietnam Scenic Journey': 'vietnam-timeless-charm',
+        'Manali Mountain Escape': 'manali-himalayan-getaway',
+        'Phuket & Krabi Islands': 'phuket-krabi-islands',
+        'Andaman Islands': 'andaman-islands',
+        'Kerala - God\'s Own Country': 'kerala-gods-own-country'
+      };
+      
+      return titleMap[title] || title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/--+/g, '-').trim();
+    }
+
+    // Modal functions
+    function openEnquiryModal() {
+      document.getElementById('enquiryModal').style.display = 'block';
+      document.getElementById('modalOverlay').style.display = 'block';
+    }
+
+    function closeEnquiryModal() {
+      document.getElementById('enquiryModal').style.display = 'none';
+      document.getElementById('modalOverlay').style.display = 'none';
+    }
+
+    // Handle enquiry form submission
+    document.getElementById('enquiryForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = {
+        destination: document.getElementById('destination').value,
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        message: document.getElementById('message').value
+      };
+      
+      console.log('Enquiry submitted:', formData);
+      alert('Thank you for your enquiry! We will contact you soon.');
+      
+      closeEnquiryModal();
+      this.reset();
+    });
+
+    // Close modal when clicking outside
+    document.getElementById('modalOverlay').addEventListener('click', closeEnquiryModal);
+
+    // Handle escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeEnquiryModal();
+      }
+    });
+
+    // Hide loader
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const loader = document.getElementById('loading');
+        loader.classList.add('hidden');
+        loader.addEventListener('transitionend', () => {
+          loader.style.display = 'none';
+        }, { once: true });
+      }, 600);
+    });
+  </script>
+  <script src="js/whats-app.js"></script>
+</body>
+
+</html>
