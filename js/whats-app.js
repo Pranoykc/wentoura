@@ -7,12 +7,12 @@
 
 /* ---------------- CONFIGURATION ---------------- */
 const WHATSAPP_NUMBERS = {
-  primary: '9995668737', // ← Replace with your live number (digits only, no +)
-  secondary: '' // Optional
+  primary: '916238468737',
+  secondary: '' 
 };
 
 const WHATSAPP_OPTIONS = {
-  autoPrompt: true,  // Show WhatsApp modal automatically after submit
+  autoPrompt: true, 
   promptDelay: 600
 };
 
@@ -89,7 +89,7 @@ window.WentouraWhatsApp = {
     return lines.join('\n');
   },
 
-  /* ✅ FIXED: consistent API endpoint */
+
   buildLink: function (formData, which = 'primary') {
     const number =
       which === 'secondary'
@@ -101,7 +101,7 @@ window.WentouraWhatsApp = {
     return `https://api.whatsapp.com/send?phone=${number}&text=${text}`;
   },
 
-  /* ✅ FIXED: universal open works on all devices */
+
   open: function (formData, which = 'primary') {
     const url = this.buildLink(formData, which);
     if (!url) {

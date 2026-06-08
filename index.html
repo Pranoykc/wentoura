@@ -14,8 +14,7 @@
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap"
     rel="stylesheet">
 
-    <!-- Elfsight Google Reviews | Untitled Google Reviews -->
-<script src="https://elfsightcdn.com/platform.js" async></script>
+
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -533,7 +532,7 @@
     }
 
     .section-description {
-      max-width: 800px;
+  
       text-align: center;
       font-size: 1.1rem;
       line-height: 1.6;
@@ -1026,11 +1025,11 @@
         <img src="https://res.cloudinary.com/dqm2v4a74/image/upload/v1761322263/IMG_5036_c6pjnn.jpg"
           alt="Mountain Adventure" class="story-image">
         <div class="eye-icon"><i class="far fa-eye"></i></div>
-         <div class="story-overlay">
+        <div class="story-overlay">
           <h3 class="story-title">Lake Paradise</h3>
           <p class="story-category">Tranquil Waters</p>
         </div>
-       
+
       </div>
       <div class="story-item">
         <img src="https://res.cloudinary.com/dqm2v4a74/image/upload/v1762238469/IMG_4146_Original_h3l1wj.jpg"
@@ -1067,9 +1066,21 @@
       <a href="stori.html" class="view-btn">View Galleries</a>
     </div>
     <div>
-      
+
     </div>
-    <div class="elfsight-app-074b463b-a87a-4ec9-ad3d-1262ba40a305" data-elfsight-app-lazy></div>
+
+  </section>
+  <!-- Google Reviews Section (Live via Trustindex) -->
+  <section class="reviews-section">
+    <div class="section-header">
+      <h2 class="section-title">What Our Travelers Say</h2>
+      <p class="section-subtitle">Read real Google reviews from people who explored the world with us.</p>
+    </div>
+
+    <!-- Trustindex Widget Container -->
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <script defer async src='https://cdn.trustindex.io/loader.js?1ce0d5973983727e5a560f71ab1'></script>
+    </div>
   </section>
 
   <!-- Footer -->
@@ -1328,16 +1339,51 @@
     prevBtn.addEventListener('click', () => scrollPortfolio('left'));
     nextBtn.addEventListener('click', () => scrollPortfolio('right'));
 
+    // Google Reviews Data
+    const reviewsData = [
+      {
+        name: "Roshan K.",
+        stars: 5,
+        text: "We booked our Malaysia trip through Wentoura Holidays. The coordination was flawless! Everything from hotels to transfers was top notch. Highly recommended!",
+        time: "1 week ago",
+        avatarColor: "#e67e22"
+      },
+      {
+        name: "Meera Nair",
+        stars: 5,
+        text: "Wentoura made our family trip to Kashmir absolutely magical. Excellent food, great hotels, and a very friendly driver. Thank you to the whole team!",
+        time: "3 weeks ago",
+        avatarColor: "#2ecc71"
+      },
+      {
+        name: "Abin Joseph",
+        stars: 5,
+        text: "Outstanding service! We did the Lakshadweep package. Everything was well planned and they kept checking on us to ensure we were comfortable. 5 stars!",
+        time: "1 month ago",
+        avatarColor: "#9b59b6"
+      },
+      {
+        name: "Sneha V.",
+        stars: 5,
+        text: "Hands down the best tour operator in Ernakulam. Booked a Thailand package and it was incredibly smooth. Clear communication and transparency.",
+        time: "2 months ago",
+        avatarColor: "#3498db"
+      },
+      {
+        name: "Siddharth & Anjali",
+        stars: 5,
+        text: "Very professional team. They customized our itinerary for Bali perfectly according to our needs. Had an unforgettable honeymoon!",
+        time: "2 weeks ago",
+        avatarColor: "#e74c3c"
+      }
+    ];
+    
     // Hide loader on page load
     window.addEventListener('load', () => {
       setTimeout(() => {
         document.getElementById('loading').classList.add('hidden');
       }, 800);
     });
-
-    // Modal functions are provided by whats-app.js
-
-    // Form submission is handled by whats-app.js
 
     // Close modal when clicking outside
     document.getElementById('modalOverlay').addEventListener('click', closeEnquiryModal);
